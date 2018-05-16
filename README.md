@@ -1,2 +1,2 @@
-# ViewerImages
+# SmartViewer
 Projet E4FIC
