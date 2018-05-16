@@ -15,8 +15,12 @@ from SmartViewerDatabase import *
 from keras.applications.resnet50 import ResNet50
 from keras.preprocessing import image
 from keras.applications.resnet50 import preprocess_input, decode_predictions
+from keras.models import Model
+
 import numpy as np
+
 model = ResNet50(weights='imagenet')
+model2 = Model(inputs=model.input, outputs=[model.output, model.get_layer('flatten_1').output])
 
 #VARIABLES
 ImageExtensions = ('.png', '.PNG', '.jpeg', '.JPEG', 'jpg', 'JPG')
@@ -104,7 +108,9 @@ class ImageViewer(QMainWindow):
                 x = np.expand_dims(x, axis=0)
                 x = preprocess_input(x)
                 # prédiction et résultat
-                preds = model.predict(x)
+                preds, sign = model2.predict(x)
+                sign = sign[0,:]
+                print(type(sign), sign.shape, sign)
                 tags = decode_predictions(preds, top=5)[0]
                 AddEntry(QueryCurs,img_path, tags[0][1], tags[1][1], tags[2][1], tags[3][1], tags[4][1]) 
         BDD.commit()
